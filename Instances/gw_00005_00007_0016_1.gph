@@ -1,0 +1,14 @@
+c random geometric graph with wraparound: 5 vertices, 9 (desired) edges, seed = 1
+g 5 7
+n 1 14 16
+n 2 8 14
+n 3 1 5
+n 4 10 17
+n 5 5 8
+e 3 5 5
+e 1 3 5
+e 3 4 7
+e 2 5 7
+e 1 2 7
+e 1 4 4
+e 2 4 3
