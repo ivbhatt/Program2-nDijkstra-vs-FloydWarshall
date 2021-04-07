@@ -1,0 +1,7 @@
+c random_graph: 5 vertices, 5 edges, seed = 5, Wed Apr  7 20:42:11 2021
+g 5 5
+e 1 2 1
+e 2 3 9
+e 3 4 4
+e 1 5 11
+e 4 5 7
