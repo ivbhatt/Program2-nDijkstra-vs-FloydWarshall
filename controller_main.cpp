@@ -2,8 +2,7 @@
 // LINK
 // Ishan Bhatt DATE
 
-#include"floyd_warshall.cpp"
-#include"dijkstra.cpp"
+#include"all_shortest_path_algos.cpp"
 
 using namespace std;
 
@@ -31,7 +30,7 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
-    vector<vector<int>> G = createGraph(input_file);
+    vector<vector<long>> G = createGraph(input_file);
     
     cout << "Input Graph Adj. Matrix:";
     printGraph(G);
@@ -49,11 +48,19 @@ int main(int argc, char* argv[]){
     }
 
     else{
-        clock_t start = clock();
-        int dj_comparisions = implementDijkstra(G);
-        clock_t end = clock();
+        clock_t dj_time = 0;
+        int dj_comparisions = 0;
+        for(int i=0; i<G.size(); i++){
+            int temp_comparisions;
+            clock_t temp_time;
+            implementDijkstra(G, i ,&temp_time, &temp_comparisions);
 
-        clock_t dj_time = double(end-start)/ double(CLOCKS_PER_SEC);
+            // cout << temp_time << endl;
+            dj_time += temp_time;
+            dj_comparisions += temp_comparisions;
+
+            cout << temp_time << "\t" << temp_comparisions << endl; 
+        }
 
         cerr << "runtime\t" << dj_time << endl;
         cerr << "comparisions\t" << dj_comparisions << endl;

@@ -1,23 +1,83 @@
-#include<iostream>
-#include<climits>
-#include<queue>
-#include<vector>
-
-#include"dependencies.h"
+#include<bits/stdc++.h>
 
 using namespace std;
 
 
+void printGraph(vector<vector<long>> G){
+    for(int i = 0; i < G.size(); i++){
+        for(int j = 0; j < G[0].size(); j++ )
+            cout<<setw(10)<<right<<G[i][j]<<" ";
+        cout<<endl;
+    }
+}
+
+vector<vector<long>> createGraph(string filename){
+    vector<vector<long>> Graph;
+
+    fstream newfile;
+    newfile.open(filename,ios::in); //open a file to perform read operation using file object
+
+    if (newfile.is_open()){   //checking whether the file is open
+        string tp;
+        getline(newfile, tp);
+        while(tp.at(0) == 'c'){
+            getline(newfile, tp);        
+        }
+        stringstream ss(tp);
+        istream_iterator<std::string> begin(ss);
+        istream_iterator<std::string> end;
+        vector<string> vstrings(begin, end);
+
+        // Extract  number of vertices and edges
+        int V = stoi(vstrings[1]);
+        int E = stoi(vstrings[2]);
+        vector<vector<long>> G (V, vector<long> (V));
+
+        for(int i=0; i<V; i++){
+            for(int j=0; j<V; j++){
+                if(i==j)
+                    G[i][j] = 0;
+                else
+                    G[i][j] = INT_MAX;
+                    // G[i][j] = numeric_limits<int>::max();
+            }
+        }
+
+        // Extract edges sources, destinations and weights
+        int e = 0;
+        while(e < E && getline(newfile, tp)){ //read data from file object and put it into string.
+            stringstream ss(tp);
+            istream_iterator<std::string> begin(ss);
+            istream_iterator<std::string> end;
+            vector<string> vstrings(begin, end);
+
+            // Process String stored in tp
+            if(vstrings[0] == "e"){
+                int u = stoi(vstrings[1]) - 1;
+                int v = stoi(vstrings[2]) - 1;
+                int w = stoi(vstrings[3]);
+                G[u][v] = w;
+                e++;
+            }
+        }
+        Graph = G;
+        newfile.close(); //close the file object.
+    } 
+    return Graph;
+}
+
+
+
 // A utility function to swap two elements
-void swap(pair<int,int> *x, pair<int,int> *y){
-    pair<int,int> temp = *x;
+void swap(pair<long,int> *x, pair<long,int> *y){
+    pair<long,int> temp = *x;
     *x = *y;
     *y = temp;
 }
 
 // A class for Min Heap
 class MinHeap{
-    vector<pair<int,int>> harr; // pointer to array of elements in heap
+    vector<pair<long,int>> harr; // pointer to array of elements in heap
     int capacity; // maximum possible size of min heap
     int heap_size; // Current number of elements in min heap
     int comps;
@@ -37,13 +97,13 @@ public:
     void MinHeapify(int );
   
     // to extract the root which is the minimum element
-    pair<int,int> extractMin();
+    pair<long,int> extractMin();
   
     // Decreases key value of key at index i to new_val
-    void decreaseKey(int i, int new_val);
+    void decreaseKey(int i, long new_val);
 
     // Inserts a new key 'k'
-    void insertKey(pair<int,int> k);
+    void insertKey(pair<long,int> k);
 
     int isEmpty();
 
@@ -57,11 +117,11 @@ MinHeap::MinHeap(int cap){
     heap_size = 0;
     capacity = cap;
     comps = 0;
-    harr = vector<pair<int,int>> (cap);
+    harr = vector<pair<long,int>> (cap);
 }
   
 // Inserts a new key 'k'
-void MinHeap::insertKey(pair<int,int> k){
+void MinHeap::insertKey(pair<long,int> k){
     if (heap_size == capacity)
     {
         cout << "\nOverflow: Could not insertKey\n";
@@ -83,7 +143,7 @@ void MinHeap::insertKey(pair<int,int> k){
   
 // Decreases value of key at index 'i' to new_val.  It is assumed that
 // new_val is smaller than harr[i].
-void MinHeap::decreaseKey(int i, int new_val){
+void MinHeap::decreaseKey(int i, long new_val){
     harr[i].first = new_val;
     while (i != 0 && harr[parent(i)].first > harr[i].first)
     {
@@ -94,7 +154,7 @@ void MinHeap::decreaseKey(int i, int new_val){
 }
   
 // Method to remove minimum element (or root) from min heap
-pair<int,int> MinHeap::extractMin(){
+pair<long,int> MinHeap::extractMin(){
     if (heap_size <= 0)
         return make_pair(INT_MAX,INT_MAX);
     if (heap_size == 1)
@@ -104,7 +164,7 @@ pair<int,int> MinHeap::extractMin(){
     }
   
     // Store the minimum value, and remove it from heap
-    pair<int,int> root = harr[0];
+    pair<long,int> root = harr[0];
     harr[0] = harr[heap_size-1];
     heap_size--;
     MinHeapify(0);
@@ -151,60 +211,13 @@ void MinHeap::printHeap(){
 }
 
 
-int implementDijkstra(vector<vector<int>> G){
 
 
-    return 0;
-}
 
-int main(){
+// int main(){
 
-    string input_file = "dual_06_09.gph";
-
-    vector<vector<int>> G = createGraph(input_file);
-    
-
-    int V = G.size();
-    int djk_comps = 0;
-    MinHeap pq(V);
-
-    printGraph(G);
-    vector<int> dist(V, INT_MAX);
-  
-    int src = 0;
-    pq.insertKey(make_pair(0, src));
-    dist[src] = 0;
-  
-    for(int i = 1; i<V; i++){
-        pq.insertKey(make_pair(INT_MAX, i));
-    }
-
-    while (!pq.isEmpty()){
-
-        pq.printHeap();
-        int u = pq.extractMin().second;
-
-        for (int i = 0; i != G[u].size(); ++i)
-        {
-            int v = i;
-            int weight = G[u][i];
-
-            if (weight != INT_MAX && dist[v] > dist[u] + weight)
-            {
-                djk_comps++;
-                dist[v] = dist[u] + weight;
-                pq.decreaseKey(i, dist[v]);
-            }
-        }
-    }
-
-    // Print shortest distances stored in dist[]
-    printf("Vertex   Distance from Source\n");
-    for (int i = 0; i < V; ++i)
-        printf("%d \t\t %d\n", i, dist[i]);
-    
-    cout<<"Comparisions: "<<pq.getComparisions() + djk_comps<<endl;
-    
-
-    return 0;
-}
+//     string fname = "dual_8_12-normalized.gph";
+//     vector<vector<int>> G = createGraph(fname);
+//     printGraph(G);
+//     return 0;
+// }

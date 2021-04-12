@@ -1,3 +1,2 @@
-#include<bits/stdc++.h>
-#include"utils.h"
+#include"utils.cpp"
 #include<time.h>
