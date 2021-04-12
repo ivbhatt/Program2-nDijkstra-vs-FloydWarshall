@@ -57,6 +57,7 @@ vector<vector<long>> createGraph(string filename){
                 int v = stoi(vstrings[2]) - 1;
                 int w = stoi(vstrings[3]);
                 G[u][v] = w;
+                G[v][u] = w;
                 e++;
             }
         }

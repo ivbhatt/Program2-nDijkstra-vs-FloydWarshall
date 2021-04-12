@@ -18,11 +18,11 @@ int main(int argc, char* argv[]){
     bool fw = false, d = false;
 
     if(algo.compare("fw") == 0){
-        cout << "Running Floyd-Warshall"<< endl;
+        // cout << "Running Floyd-Warshall"<< endl;
         fw = true;
     }
     else if(algo.compare("d") == 0){
-        cout << "Running Dijkstra"<< endl;
+        // cout << "Running Dijkstra"<< endl;
         d = true;
     }
     else{
@@ -32,8 +32,7 @@ int main(int argc, char* argv[]){
 
     vector<vector<long>> G = createGraph(input_file);
     
-    cout << "Input Graph Adj. Matrix:";
-    printGraph(G);
+
 
     if(fw){
         
@@ -59,10 +58,10 @@ int main(int argc, char* argv[]){
             dj_time += temp_time;
             dj_comparisions += temp_comparisions;
 
-            cout << temp_time << "\t" << temp_comparisions << endl; 
+            // cout << temp_time << "\t" << temp_comparisions << endl; 
         }
 
-        cerr << "runtime\t" << dj_time << endl;
+        cerr << "runtime\t" << (dj_time * 1000)<< endl;
         cerr << "comparisions\t" << dj_comparisions << endl;
     }
 

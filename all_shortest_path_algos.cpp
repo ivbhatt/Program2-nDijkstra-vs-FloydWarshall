@@ -2,8 +2,8 @@
 
 int implementFloydWarshall(vector<vector<long>> G){
 
-    cout << "Before FloydWarshall:" << endl;
-    printGraph(G);
+    // cout << "Before FloydWarshall:" << endl;
+    // printGraph(G);
 
     int n = G.size();
     int comparisions = 0;
@@ -18,10 +18,21 @@ int implementFloydWarshall(vector<vector<long>> G){
             }
         }
     }
+    cout << n << endl;
+    for(int i = 0; i< n; i++){
+        for(int j=0; j<n; j++){
+            if(G[i][j] >= INT_MAX)
+                cout << "-1" << endl;
+            else
+                cout << G[i][j] << endl;
+        }        
+        if(i != n-1)
+            cout << "-1" << endl;
+    }
 
 
-    cout << "After FloydWarshall:" << endl;
-    printGraph(G);
+    // cout << "After FloydWarshall:" << endl;
+    // printGraph(G);
 
     return comparisions;
 }
@@ -68,14 +79,22 @@ void implementDijkstra(vector<vector<long>> G, int src, clock_t* time_taken, int
 
     clock_t end = clock();
 
-    clock_t d_time = double(end-start)/ double(CLOCKS_PER_SEC/(1000*1000));
+    clock_t d_time = double(end-start)/ double(CLOCKS_PER_SEC/(1000));
     
     *time_taken = d_time;
     *num_comparisions = djk_comps + pq.getComparisions();
     
     // Print shortest distances stored in dist[]
-    // for (int i = 0; i < V; ++i){
-    //     cout<<dist[i]<<endl;
-    // }
+    if(src == 0)
+        cout<<V<<endl;
+    for (int i = 0; i < V; ++i){
+        if (dist[i] >= INT_MAX)
+            cout<<"-1"<<endl;
+        else
+            cout<<dist[i]<<endl;
+    }
+    if(src != V-1){
+        cout<<"-1"<<endl;
+    }
 }
 
