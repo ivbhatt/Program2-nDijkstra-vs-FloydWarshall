@@ -18,6 +18,7 @@ void printGraph(vector<vector<int>> G){
 
 vector<vector<int>> createGraph(string filename){
     vector<vector<int>> Graph;
+
     fstream newfile;
     newfile.open(filename,ios::in); //open a file to perform read operation using file object
 
@@ -40,7 +41,7 @@ vector<vector<int>> createGraph(string filename){
                 if(i==j)
                     G[i][j] = 0;
                 else
-                    G[i][j] = 100000;
+                    G[i][j] = INT_MAX;
                     // G[i][j] = numeric_limits<int>::max();
             }
         }

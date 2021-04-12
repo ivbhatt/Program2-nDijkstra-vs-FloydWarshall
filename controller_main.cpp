@@ -3,6 +3,7 @@
 // Ishan Bhatt DATE
 
 #include"floyd_warshall.cpp"
+#include"dijkstra.cpp"
 
 using namespace std;
 
@@ -45,7 +46,17 @@ int main(int argc, char* argv[]){
 
         cerr << "runtime\t" << fw_time << endl;
         cerr << "comparisions\t" << fw_comparisions << endl;
-        return 0;
+    }
+
+    else{
+        clock_t start = clock();
+        int dj_comparisions = implementDijkstra(G);
+        clock_t end = clock();
+
+        clock_t dj_time = double(end-start)/ double(CLOCKS_PER_SEC);
+
+        cerr << "runtime\t" << dj_time << endl;
+        cerr << "comparisions\t" << dj_comparisions << endl;
     }
 
 
