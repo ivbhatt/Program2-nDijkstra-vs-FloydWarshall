@@ -1,48 +1,43 @@
-// Problem link: 
-// LINK
-// Ishan Bhatt DATE
-
 #include"all_shortest_path_algos.cpp"
-
 using namespace std;
 
 int main(int argc, char* argv[]){
 
+    // First check if proper CLIs are supplied (2 additional command lines are expected and required) 
     if (argc != 3){
         cout << "This program takes 2 CLIs- 1: [d/fw] 2:[input_filename]" << endl;
         return -1;
     }
 
+    // Storing the CLIs
     string algo = argv[1];
     string input_file = argv[2];
     bool fw = false, d = false;
 
-    if(algo.compare("fw") == 0){
-        // cout << "Running Floyd-Warshall"<< endl;
+
+    // choose algorithm
+    if(algo.compare("fw") == 0)
         fw = true;
-    }
-    else if(algo.compare("d") == 0){
-        // cout << "Running Dijkstra"<< endl;
+    else if(algo.compare("d") == 0)
         d = true;
-    }
     else{
         cout << "Only Dijkstra(d) and Floyd-Warshall(fw) are supported" << endl;
         return -1;
     }
 
+
     vector<vector<long>> G = createGraph(input_file);
-    
 
 
     if(fw){
-        
-        clock_t start = clock();
-        int fw_comparisions = implementFloydWarshall(G);
-        clock_t end = clock();
 
-        clock_t fw_time = double(end-start)/ double(CLOCKS_PER_SEC);
+        // place holders to store run-time and num_comparisions
+        clock_t fw_time;
+        int fw_comparisions;
 
-        cerr << "runtime\t" << fw_time << endl;
+        implementFloydWarshall(G, &fw_time, &fw_comparisions);
+
+        cerr << "runtime\t" << (fw_time/1000) << endl;
         cerr << "comparisions\t" << fw_comparisions << endl;
     }
 
@@ -61,14 +56,9 @@ int main(int argc, char* argv[]){
             // cout << temp_time << "\t" << temp_comparisions << endl; 
         }
 
-        cerr << "runtime\t" << (dj_time * 1000)<< endl;
+        cerr << "runtime\t" << (dj_time / 1000)<< endl;
         cerr << "comparisions\t" << dj_comparisions << endl;
     }
-
-
-
-
-	// cout << "You've entered " << argc << " clis\n";
 
     return 0;
 }

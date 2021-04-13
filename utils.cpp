@@ -128,7 +128,8 @@ void MinHeap::insertKey(pair<long,int> k){
         cout << "\nOverflow: Could not insertKey\n";
         return;
     }
-  
+    comps++;
+
     // First insert the new key at the end
     heap_size++;
     int i = heap_size - 1;
@@ -137,6 +138,7 @@ void MinHeap::insertKey(pair<long,int> k){
     // Fix the min heap property if it is violated
     while (i != 0 && harr[parent(i)].first > harr[i].first)
     {
+        comps++;
         swap(harr[i], harr[parent(i)]);
         i = parent(i);
     }
@@ -177,17 +179,18 @@ void MinHeap::MinHeapify(int i){
     int l = left(i);
     int r = right(i);
     int smallest = i;
+    comps++;
     if (l < heap_size && harr[l].first < harr[i].first){
         smallest = l;
-        comps++;
+        
     }
+    comps++;
     if (r < heap_size && harr[r].first < harr[smallest].first){
         smallest = r;
-        comps++;
+        
     }
     if (smallest != i)
     {
-        comps++;
         swap(&harr[i], &harr[smallest]);
         MinHeapify(smallest);
     }
@@ -210,15 +213,3 @@ void MinHeap::printHeap(){
     }
     cout<<"---------->"<<endl;
 }
-
-
-
-
-
-// int main(){
-
-//     string fname = "dual_8_12-normalized.gph";
-//     vector<vector<int>> G = createGraph(fname);
-//     printGraph(G);
-//     return 0;
-// }
