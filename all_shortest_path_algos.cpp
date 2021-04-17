@@ -80,16 +80,19 @@ void implementDijkstra(vector<vector<long>> G, int src, clock_t* time_taken, int
         int u = pq.extractMin().second;
 
         // Check all nodes connected to u and relax edges
-        for (int i = 0; i != G[u].size(); ++i)
+        for (int i = 0; i < G[u].size(); ++i)
         {
             int v = i;
             long weight = G[u][i];
 
-            if (weight != INT_MAX && dist[v] > dist[u] + weight)
+
+            if (weight != INT_MAX)
             {
-                djk_comps++;
-                dist[v] = dist[u] + weight;
-                pq.decreaseKey(i, dist[v]);
+		djk_comps++;		
+		if(dist[v] > dist[u] + weight){
+                	dist[v] = dist[u] + weight;
+                	pq.decreaseKey(i, dist[v]);
+		}
             }
         }
     }

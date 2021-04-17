@@ -128,7 +128,6 @@ void MinHeap::insertKey(pair<long,int> k){
         cout << "\nOverflow: Could not insertKey\n";
         return;
     }
-    comps++;
 
     // First insert the new key at the end
     heap_size++;
@@ -138,7 +137,7 @@ void MinHeap::insertKey(pair<long,int> k){
     // Fix the min heap property if it is violated
     while (i != 0 && harr[parent(i)].first > harr[i].first)
     {
-        comps++;
+        //coms++;
         swap(harr[i], harr[parent(i)]);
         i = parent(i);
     }
@@ -148,12 +147,28 @@ void MinHeap::insertKey(pair<long,int> k){
 // new_val is smaller than harr[i].
 void MinHeap::decreaseKey(int i, long new_val){
     harr[i].first = new_val;
+
+
+/*
+    while (i != 0 )
+    {
+        comps++;
+        if (harr[parent(i)].first > harr[i].first){
+            swap(harr[i], harr[parent(i)]);
+            i = parent(i);
+        }
+        else
+            break;
+    }
+*/
+
     while (i != 0 && harr[parent(i)].first > harr[i].first)
     {
         comps++;
         swap(harr[i], harr[parent(i)]);
         i = parent(i);
     }
+
 }
   
 // Method to remove minimum element (or root) from min heap
@@ -179,16 +194,20 @@ void MinHeap::MinHeapify(int i){
     int l = left(i);
     int r = right(i);
     int smallest = i;
-    comps++;
+
     if (l < heap_size && harr[l].first < harr[i].first){
         smallest = l;
         
     }
-    comps++;
+
     if (r < heap_size && harr[r].first < harr[smallest].first){
         smallest = r;
         
     }
+
+    if (l < heap_size || r<heap_size)
+        comps++;
+    
     if (smallest != i)
     {
         swap(&harr[i], &harr[smallest]);
