@@ -15,7 +15,10 @@
         use: bash compile.sh
    
    run_apsp.sh: shell script wrapper to run the code
-        use: bash run_apsp.sh [f/dw] [path-to-input-.gph-file]
+        use: bash run_apsp.sh [f/dw] [path-to-input-.gph-file] > output.out
+        
+   silent_run_apsp.sh: same as run_apsp.sh except that stdout is redirected to /dev/null 
+        use: bash silent_run_apsp.sh [f/dw] [path-to-input-.gph-file]
 
 ==code==
    dependencies.h: contains imports of C++ packages

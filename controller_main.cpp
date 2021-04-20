@@ -11,7 +11,9 @@ int main(int argc, char* argv[]){
     
     // First check if proper CLIs are supplied (3 additional command lines are expected and required) 
     if (argc != 4){
-        cerr << "This program takes 3 CLIs- 1: [d/fw] 2:[input_filename] 3:[D for D-heap dijkstra]" << endl;
+        cerr << "This program takes 3 CLIs- 1: [d/fw] 2:[input_filename] 3*:[D for D-heap dijkstra]" << endl;
+        cerr << "*D for D-heap is not necessary (or allowed) if you are using the shell-script wrappers [run_apsp.sh or silent_run_apsp.sh]" << endl;
+        
         return -1;
     }
 

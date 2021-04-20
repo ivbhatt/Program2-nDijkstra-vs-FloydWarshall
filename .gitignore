@@ -1,4 +1,8 @@
 *.gph
 *.out
 *.exe
-.vscode/*
+.vscode
+Instances
+Outputs
+input_gph_files
+output_out_files
