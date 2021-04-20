@@ -1,4 +1,4 @@
 *.gph
 *.out
 *.exe
-
+.vscode/*
