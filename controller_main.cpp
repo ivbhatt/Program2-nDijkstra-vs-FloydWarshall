@@ -42,12 +42,12 @@ int main(int argc, char* argv[]){
     if(fw){
 
         // place holders to store run-time and num_comparisions
-        double fw_time;
-        int fw_comparisions;
+        double fw_time = 0;
+        int fw_comparisions = 0;
 
         implementFloydWarshall(G, &fw_time, &fw_comparisions);
 
-        cerr << "runtime\t" << setprecision(1) << double(fw_time/1000) << endl;
+        cerr << "runtime\t" << fixed << setprecision(1) << double(fw_time/1000) << endl;
         cerr << "comparisions\t" << fw_comparisions << endl;
     }
 
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
         }
 
         // print required information on stderr
-        cerr << "runtime\t" << fixed << setprecision(1) << double(dj_time / 1000)<< endl;
+        cerr << "runtime\t" << fixed << setprecision(1) << double(dj_time/1000)<< endl;
         cerr << "comparisions\t" << dj_comparisions << endl;
         
     }
