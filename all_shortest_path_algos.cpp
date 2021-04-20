@@ -140,18 +140,20 @@ void implementDijkstraDHeap(vector<vector<long>> G, int src, double* time_taken,
 
 //DEBUG
         
-        cerr << "Heap comparisions:" << pq.getComparisions() << "\t";
-        cerr << "Edge comparisions:" << djk_edge_comparisons << endl;
         
-        cerr << "Calls to extractMin:" << pq.number_of_calls_to_ExtractMin << "\t";
-        cerr << "total comparisons by extractMin:" << pq.total_comparisons_added_by_extractMin << "\t";
-        cerr << "Max incr by extrMin:" << pq.max_comparisons_added_by_extractMin << "\n";
-        
-        cerr << "Calls to decreaseKey:" << pq.number_of_calls_to_DereaseKey << "\t";
-        cerr << "total comparisons by decreaseKey:" << pq.total_comparisons_added_by_DecreaseKey << "\t";
-        cerr << "Max incr by decreaseKey:" << pq.max_comparisons_added_by_DecreaseKey << "\n";
         
     }
+    
+    cerr << "Heap comparisions:" << pq.getComparisions() << "\t";
+    cerr << "Edge comparisions:" << djk_edge_comparisons << endl;
+    
+    cerr << "Calls to extractMin:" << pq.number_of_calls_to_ExtractMin << "\t";
+    cerr << "total comparisons by extractMin:" << pq.total_comparisons_added_by_extractMin << "\t";
+    cerr << "Max incr by extrMin:" << pq.max_comparisons_added_by_extractMin << "\n";
+    
+    cerr << "Calls to decreaseKey:" << pq.number_of_calls_to_DereaseKey << "\t";
+    cerr << "total comparisons by decreaseKey:" << pq.total_comparisons_added_by_DecreaseKey << "\t";
+    cerr << "Max incr by decreaseKey:" << pq.max_comparisons_added_by_DecreaseKey << "\n";
 
     clock_t end = clock();
 
