@@ -1,5 +1,7 @@
 #include"dependencies.h"
 
+
+// function to implement thr FloydWarshall algorithm
 void implementFloydWarshall(vector<vector<long>> G, double* time_taken, int* num_comparisions){
 
 
@@ -7,12 +9,16 @@ void implementFloydWarshall(vector<vector<long>> G, double* time_taken, int* num
     // cout << "Before FloydWarshall:" << endl;
     // printGraph(G);
 
+    //start the clock
     clock_t start = clock();
 
+
     int n = G.size();
+    // comparison counter
     int comparisions = 0;
 
 
+    // the floyd-warshall algorithm-loop
     for(int k = 0; k < n; k++){
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
@@ -25,11 +31,13 @@ void implementFloydWarshall(vector<vector<long>> G, double* time_taken, int* num
         }
     }
 
+    // stop the clock
     clock_t end = clock();
 
+    // measure the time in milliseconds
     double d_time = double(end-start)/ double(CLOCKS_PER_SEC/(1000));
     
-    cerr << d_time << endl;
+    // printing the output in the required format
     cout << n << endl;
     for(int i = 0; i< n; i++){
         for(int j=0; j<n; j++){
@@ -46,90 +54,97 @@ void implementFloydWarshall(vector<vector<long>> G, double* time_taken, int* num
     // cout << "After FloydWarshall:" << endl;
     // printGraph(G);
 
+    // "return" the stats
     *num_comparisions = comparisions;
     *time_taken = d_time; 
 }
 
 
 // Implements the Dijkstra Algorithm for a given graph and source vertex
-void implementDijkstraDHeap(vector<vector<long>> G, int src, double* time_taken, int* num_comparisions, int D){
+void implementDijkstraDHeap(vector<vector<long>> G, int src, double* time_taken, int* num_comparisions, int D, bool debug){
 
 //DEBUG
     // cout << "Before Dijkstra:" << endl;
     // printGraph(G);
-
-    cerr << "++++++++++++++++++++++" << endl;
+//    cerr << "++++++++++++++++++++++" << endl;
 
     int V = G.size();
     int djk_edge_comparisons = 0;
 
-    // Initialize MinHeap/PriorityQueue
+    // Declare MinHeap/PriorityQueue
     DMinHeap pq(D, V);
 
 
+    // Initially all nodes are ata distance of INFINITY from the start_node
     vector<long> dist(V, INT_MAX);
-    
+ 
+    // One the best path to a node is found, the node is marked as "DONE" 
     vector<bool> doneSet(V, false);
 
+    // start the clock
     clock_t start = clock();
     
     // Insert Source node to the PriorityQueue
     dist[src] = 0;
     pq.insertKey(make_pair(0, src));
      
-    // Insert the rest of nodes with a weight of INT_MAX
-//    for(int i = 0; i<V; i++){
-//        if(i != src){
-//            pq.insertKey(make_pair(INT_MAX, i));
-//        }
-//    }
-
     
 
+    // repeat until the priority queue is empty
     while (!pq.isEmpty()){
 
-// Extract the first element from the priority queue
-
+        // Extract the first element from the priority queue
         pair<long, int> extracted_node = pq.extractMin();
 
-        
         long u_dist = extracted_node.first;
         int u = extracted_node.second;
 
+//DEBUG
 //        cerr << "Removed node:" << u_dist << " " << u << endl;
+
 
 //        This node's best distance is found
         doneSet[u] = true;
 
-   
-        cerr<<"For vertex:" << u << endl;
+//DEBUG
+//        cerr<<"For vertex:" << u << endl;
 //        cerr << "comparisions:" << pq.getComparisions() << endl;
 //        cerr << djk_comps << endl;
             
 
 // Check all nodes connected to u and relax edges
         for (int i = 0; i < V; ++i){
-            
+
+            // get the weight from current node to this node from the adjacency matrix            
 	        long weight = G[u][i];
 
-// Of all neighbours, only consider neighbours whose best distance is not yet found
+            // Of all neighbours, only consider neighbours whose best distance is not yet found
             if (weight != INT_MAX && doneSet[i] == false)
             {
+//DEBUG
 //                cerr << "finding better path to:" << i <<  "from " << u <<endl;
-		        djk_edge_comparisons++;
-		        if(dist[i] > dist[u] + weight ){
-                	if(dist[i] != INT_MAX){
-//                	    cerr << "Updating node: "<< dist[i] <<  "  "<< i << " to  ";  
 
+                // An edge comparison
+		        djk_edge_comparisons++;
+
+		        if(dist[i] > dist[u] + weight ){
+
+                	if(dist[i] != INT_MAX){
+                	// if this node is already discovered, update best path
+//DEBUG
+//                	    cerr << "Updating node: "<< dist[i] <<  "  "<< i << " to  ";  
                 	    dist[i] = dist[u] + weight;
+//DEBUG
 //                	    cerr << dist[i] <<  "  "<< i << endl;  
 
                 	    pq.decreaseKey(i, dist[i]);
                 	}
                 	else{
-                	    dist[i] = dist[u] + weight;
+                	// if this node has not been discovered yet, we insert it into the priority queue
+//DEBUG
 //                	    cerr << "Inserting node: "<< dist[i] << "  "<< i << endl;
-
+                         
+                	    dist[i] = dist[u] + weight;
                 	    pq.insertKey(make_pair(dist[i], i));
 
                 	}
@@ -143,22 +158,26 @@ void implementDijkstraDHeap(vector<vector<long>> G, int src, double* time_taken,
         
         
     }
-    
-    cerr << "Heap comparisions:" << pq.getComparisions() << "\t";
-    cerr << "Edge comparisions:" << djk_edge_comparisons << endl;
-    
-    cerr << "Calls to extractMin:" << pq.number_of_calls_to_ExtractMin << "\t";
-    cerr << "total comparisons by extractMin:" << pq.total_comparisons_added_by_extractMin << "\t";
-    cerr << "Max incr by extrMin:" << pq.max_comparisons_added_by_extractMin << "\n";
-    
-    cerr << "Calls to decreaseKey:" << pq.number_of_calls_to_DereaseKey << "\t";
-    cerr << "total comparisons by decreaseKey:" << pq.total_comparisons_added_by_DecreaseKey << "\t";
-    cerr << "Max incr by decreaseKey:" << pq.max_comparisons_added_by_DecreaseKey << "\n";
-
+    // print DEBUG information if requested
+    if(debug){
+        cerr << "== Last Iteration of Dijsktra == " << endl;
+        cerr << "Heap comparisions:\t" << pq.getComparisions() << "\t";
+        cerr << "Edge comparisions:\t\t\t" << djk_edge_comparisons << endl;
+        
+        cerr << "Count calls to extractMin:\t" << pq.number_of_calls_to_ExtractMin << "\t";
+        cerr << "Sum comparisons by extractMin:\t" << pq.total_comparisons_added_by_extractMin << "\t";
+        cerr << "Max comparisons by one extractMin:\t" << pq.max_comparisons_added_by_extractMin << "\n";
+        
+        cerr << "Count calls to decreaseKey:\t" << pq.number_of_calls_to_DereaseKey << "\t";
+        cerr << "Sum comparisons by decreaseKey:\t" << pq.total_comparisons_added_by_DecreaseKey << "\t";
+        cerr << "Max comparsons by decreaseKey:\t\t" << pq.max_comparisons_added_by_DecreaseKey << "\n";
+    }
+    // stop the clock
     clock_t end = clock();
 
     double d_time = double(end-start)/ double(CLOCKS_PER_SEC/(1000));
-    
+
+    //"return" the runtime stats    
     *time_taken = d_time;
     *num_comparisions = djk_edge_comparisons + pq.getComparisions();
 

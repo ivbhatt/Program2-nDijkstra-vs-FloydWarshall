@@ -4,7 +4,11 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-
+    
+    // global flag variable for printing debug information
+    bool DEBUG = true;
+    
+    
     // First check if proper CLIs are supplied (3 additional command lines are expected and required) 
     if (argc != 4){
         cerr << "This program takes 3 CLIs- 1: [d/fw] 2:[input_filename] 3:[D for D-heap dijkstra]" << endl;
@@ -47,19 +51,24 @@ int main(int argc, char* argv[]){
 
     else{
         // place holders to store run-time and num_comparisions
-
         double dj_time = 0;
         int dj_comparisions = 0;
+        
+        // run n-iterations of Dijkstra with different start nodes
         for(int i=0; i<G.size(); i++){
             int temp_comparisions = 0;
             double temp_time;
-            implementDijkstraDHeap(G, i ,&temp_time, &temp_comparisions, D);
-
+            
+            if(i == G.size()-1)
+                implementDijkstraDHeap(G, i ,&temp_time, &temp_comparisions, D, DEBUG);
+            else
+                implementDijkstraDHeap(G, i ,&temp_time, &temp_comparisions, D, false);
             dj_time += temp_time;
             dj_comparisions += temp_comparisions;
-            break;
+
         }
 
+        // print required information on stderr
         cerr << "runtime\t" << fixed << setprecision(1) << double(dj_time / 1000)<< endl;
         cerr << "comparisions\t" << dj_comparisions << endl;
         

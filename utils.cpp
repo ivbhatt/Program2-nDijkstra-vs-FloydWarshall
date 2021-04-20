@@ -79,6 +79,7 @@ class DMinHeap{
 
     
 public:
+    // some counters for storing DEBUG information
     int number_of_calls_to_ExtractMin;
     int max_comparisons_added_by_extractMin;
     int total_comparisons_added_by_extractMin;
@@ -86,7 +87,8 @@ public:
     int number_of_calls_to_DereaseKey;
     int max_comparisons_added_by_DecreaseKey;
     int total_comparisons_added_by_DecreaseKey;
-
+    ////
+    
 //Generic constructor to initialize the DMinHeap
     DMinHeap(int D, int capacity){
         heap_size = 0;
@@ -145,6 +147,9 @@ public:
 
 //Used to insert a node into the heap while maintaining the heap property
 void DMinHeap::insertKey(pair<long,int> new_node){
+    // calls to insertKey are also considered as calls to decreaseKey
+    number_of_calls_to_DereaseKey++;
+    
     //If heap is full, throw error
     if(heap_size == capacity){
         cout << "\nWARNING:: Overflow: Could not insertKey\n";
@@ -159,7 +164,8 @@ void DMinHeap::insertKey(pair<long,int> new_node){
     
     //then percolate it up to its appropriate position
     while(i>=0){
-//        comparisions++;
+        comparisions++;
+        total_comparisons_added_by_DecreaseKey++;
         if(heap_array[i] < heap_array[parent(i)]){
 
             swap(heap_array[i], heap_array[parent(i)]);
@@ -226,6 +232,7 @@ void DMinHeap::minHeapify(int index){
             }
         }
         
+        // the case where this node has no children
         if(min_child.first == INT_MAX){
 //            cerr << "w";
             break;
