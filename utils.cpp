@@ -1,15 +1,17 @@
 #include<bits/stdc++.h>
-
 using namespace std;
 
 
+//Utility function used for debugging 
 void printGraph(vector<vector<long>> G){
     for(int i = 0; i < G.size(); i++){
         for(int j = 0; j < G[0].size(); j++ )
-            cout<<setw(10)<<right<<G[i][j]<<" ";
-        cout<<endl;
+            cerr<<setw(12)<<right<<G[i][j]<<" ";
+        cerr<<endl;
     }
 }
+
+//Utility function used to load the graph into RAM (in adjaceny matrix format) from .gph file
 
 vector<vector<long>> createGraph(string filename){
     vector<vector<long>> Graph;
@@ -39,10 +41,8 @@ vector<vector<long>> createGraph(string filename){
                     G[i][j] = 0;
                 else
                     G[i][j] = INT_MAX;
-                    // G[i][j] = numeric_limits<int>::max();
             }
         }
-
         // Extract edges sources, destinations and weights
         int e = 0;
         while(e < E && getline(newfile, tp)){ //read data from file object and put it into string.
@@ -68,167 +68,240 @@ vector<vector<long>> createGraph(string filename){
 }
 
 
+//Class to implement D-arry MinHeap
 
-// A utility function to swap two elements
-void swap(pair<long,int> *x, pair<long,int> *y){
-    pair<long,int> temp = *x;
-    *x = *y;
-    *y = temp;
-}
+class DMinHeap{
+	vector<pair<long,int>> heap_array; // pointer to array of elements in heap
+	int capacity; // maximum possible size of min heap
+	int heap_size; // Current number of elements in min heap
+	int comparisions; // variable to store the number of comparisons done on this instance of the heap
+	int D;     // tells us how many children does each node have
 
-// A class for Min Heap
-class MinHeap{
-    vector<pair<long,int>> harr; // pointer to array of elements in heap
-    int capacity; // maximum possible size of min heap
-    int heap_size; // Current number of elements in min heap
-    int comps;
+    
 public:
-    // Constructor
-    MinHeap(int capacity);
-  
-    int parent(int i) { return (i-1)/2; }
-  
-    // to get index of left child of node at index i
-    int left(int i) { return (2*i + 1); }
-  
-    // to get index of right child of node at index i
-    int right(int i) { return (2*i + 2); }
+    int number_of_calls_to_ExtractMin;
+    int max_comparisons_added_by_extractMin;
+    int total_comparisons_added_by_extractMin;
 
-    // to heapify a subtree with the root at given index
-    void MinHeapify(int );
-  
-    // to extract the root which is the minimum element
-    pair<long,int> extractMin();
-  
-    // Decreases key value of key at index i to new_val
-    void decreaseKey(int i, long new_val);
+    int number_of_calls_to_DereaseKey;
+    int max_comparisons_added_by_DecreaseKey;
+    int total_comparisons_added_by_DecreaseKey;
 
-    // Inserts a new key 'k'
-    void insertKey(pair<long,int> k);
+//Generic constructor to initialize the DMinHeap
+    DMinHeap(int D, int capacity){
+        heap_size = 0;
+        this->capacity = capacity;
+        this->comparisions = 0;
+        this->D = D;
+        heap_array = vector<pair<long,int>> (capacity);
+        number_of_calls_to_ExtractMin = 0;
+        max_comparisons_added_by_extractMin = 0;
+        total_comparisons_added_by_extractMin = 0;
 
-    int isEmpty();
+        number_of_calls_to_DereaseKey = 0;
+        max_comparisons_added_by_DecreaseKey = 0;
+        total_comparisons_added_by_DecreaseKey = 0;
+        
+    }
+    
+//    Basic getters and setters are defined inline 
+    
+    int getComparisions(){
+        return comparisions;
+    }
+    int parent(int i){
+        if(i==0)
+            return 0;
+        return (i-1)/D;
+    }
+    
+    
+    int isEmpty(){
+        if(heap_size == 0){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+// ***************************************************
 
-    void printHeap();
+//Functionalities are declared here and defined outside the class defintion
+    
+    void insertKey(pair<long,int> new_node);    
+    
+    pair<long, int> extractMin();
 
-    int getComparisions(){ return comps; }
+	void minHeapify(int index);
+	
+
+	void decreaseKey(int i, long new_val);
+	
+	void printHeap();
+	
+	
+	
 };
 
-// Constructor: Builds a heap from a given array a[] of given size
-MinHeap::MinHeap(int cap){
-    heap_size = 0;
-    capacity = cap;
-    comps = 0;
-    harr = vector<pair<long,int>> (cap);
-}
-  
-// Inserts a new key 'k'
-void MinHeap::insertKey(pair<long,int> k){
-    if (heap_size == capacity)
-    {
-        cout << "\nOverflow: Could not insertKey\n";
+//Used to insert a node into the heap while maintaining the heap property
+void DMinHeap::insertKey(pair<long,int> new_node){
+    //If heap is full, throw error
+    if(heap_size == capacity){
+        cout << "\nWARNING:: Overflow: Could not insertKey\n";
         return;
     }
-
-    // First insert the new key at the end
+    
+    
+    //insert the node at the end of the heap
     heap_size++;
-    int i = heap_size - 1;
-    harr[i] = k;
-  
-    // Fix the min heap property if it is violated
-    while (i != 0 && harr[parent(i)].first > harr[i].first)
-    {
-        //coms++;
-        swap(harr[i], harr[parent(i)]);
-        i = parent(i);
+    int i = heap_size-1;
+    heap_array[i] = new_node;
+    
+    //then percolate it up to its appropriate position
+    while(i>=0){
+//        comparisions++;
+        if(heap_array[i] < heap_array[parent(i)]){
+
+            swap(heap_array[i], heap_array[parent(i)]);
+            i = parent(i);
+            
+        }
+        else{
+            break;
+        }
     }
+    
 }
-  
-// Decreases value of key at index 'i' to new_val.  It is assumed that
-// new_val is smaller than harr[i].
-void MinHeap::decreaseKey(int i, long new_val){
-    harr[i].first = new_val;
+   
 
+//Used to extract the minimum node (root) from the heap while maintaining the heap property
+pair<long, int> DMinHeap::extractMin(){
+    number_of_calls_to_ExtractMin += 1;
+    
+    //If heap is empty return an infinite value
+    if(heap_size <=0)
+        return make_pair(INT_MAX, INT_MAX);
 
-/*
-    while (i != 0 )
-    {
-        comps++;
-        if (harr[parent(i)].first > harr[i].first){
-            swap(harr[i], harr[parent(i)]);
+    if(heap_size == 1){
+        heap_size--;
+        return heap_array[0];
+    }
+
+    //If heap has many elements than we must remove root, replace it by the last element 
+    //and then call heapify on the new root to maintain heap property    
+    pair<long, int> root = heap_array[0];
+    heap_array[0] = heap_array[heap_size-1];
+    heap_size--;
+
+    minHeapify(0); 
+    return root;
+}
+    
+// Function used to ensure heap-property starting at node index
+void DMinHeap::minHeapify(int index){
+
+    int children[D+1];
+    int total_comparison_cnt = 0;
+    while(1){
+    
+        for(int i=1; i<=D; i++){
+            children[i] = ((D*index + i) < heap_size) ? (D*index + i) : -1;
+        }
+        
+        int min_child_index;
+        //Value of 505 is used because this code is being written as a part for CSC 505: Design and Analysis of Algorithms
+        pair<long,int> min_child = make_pair(INT_MAX, 505);
+        
+        //Number of comparisions required to find the minimum child are stored in this variable 
+        int comparison_counter = 0;
+        
+        // Find the minimum child with at most D comparisions
+        for(int i=1; i<=D; i++){
+            if(children[i] != -1){ 
+                comparison_counter++;
+                if(heap_array[children[i]].first < min_child.first){
+                    min_child_index = children[i];
+                    min_child = heap_array[children[i]];
+                }
+            }
+        }
+        
+        if(min_child.first == INT_MAX){
+//            cerr << "w";
+            break;
+        }
+
+        if(comparison_counter > D){
+            cerr << "WARNING:: comparison_counter > D. The code is giong CRAZZIE! (unknown bug/ this should never happen)" << endl;
+            exit(-1);
+        }
+        
+        
+        //adding comparisons made to the global counter
+        comparisions+=comparison_counter;        
+        total_comparison_cnt += comparison_counter;
+        // if min_child is less than parent, we must swap the parent and the child
+        if(heap_array[index].first > heap_array[min_child_index].first){
+            swap(heap_array[index], heap_array[min_child_index]);
+        }else{
+            break;
+        }
+        
+        //continue to see if parent deserves to go further down!
+        index = min_child_index;
+    }
+    if(total_comparison_cnt > max_comparisons_added_by_extractMin)
+            max_comparisons_added_by_extractMin = total_comparison_cnt;
+//    
+    total_comparisons_added_by_extractMin += total_comparison_cnt;
+
+}
+ 
+   
+//decreaseKey decreases the Key for a particular value and then percolates that node upwards to maintain the minHeap property
+void DMinHeap::decreaseKey(int i, long new_val){
+    number_of_calls_to_DereaseKey++;
+//Finding the node with value equal to i    
+    bool found = false;
+    for(int temp = 0; temp < heap_size; temp++){
+        if(heap_array[temp].second == i){
+            heap_array[temp].first = new_val;
+            i = temp;
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+        cerr << "WARNING:: KEY NOT FOUND!" << endl;
+
+//Percolate this node (with reduced key) until either it becomes the root or it has a parent with smaller key    
+    int total_comparisions = 0;
+    while(i!=0){
+//    One comparision level. At most log_D(N) such comparisions will be made per decreaseKey call
+        comparisions++;
+        total_comparisions++;
+        if(heap_array[parent(i)].first > heap_array[i].first){
+
+            swap(heap_array[i], heap_array[parent(i)]);
             i = parent(i);
         }
         else
+//        Break if a smaller parent is found
             break;
-    }
-*/
-
-    while (i != 0 && harr[parent(i)].first > harr[i].first)
-    {
-        comps++;
-        swap(harr[i], harr[parent(i)]);
-        i = parent(i);
-    }
-
-}
-  
-// Method to remove minimum element (or root) from min heap
-pair<long,int> MinHeap::extractMin(){
-    if (heap_size <= 0)
-        return make_pair(INT_MAX,INT_MAX);
-    if (heap_size == 1)
-    {
-        heap_size--;
-        return harr[0];
-    }
-  
-    // Store the minimum value, and remove it from heap
-    pair<long,int> root = harr[0];
-    harr[0] = harr[heap_size-1];
-    heap_size--;
-    MinHeapify(0);
-  
-    return root;
-}
-
-void MinHeap::MinHeapify(int i){
-    int l = left(i);
-    int r = right(i);
-    int smallest = i;
-
-    if (l < heap_size && harr[l].first < harr[i].first){
-        smallest = l;
-        
-    }
-
-    if (r < heap_size && harr[r].first < harr[smallest].first){
-        smallest = r;
-        
-    }
-
-    if (l < heap_size || r<heap_size)
-        comps++;
     
-    if (smallest != i)
-    {
-        swap(&harr[i], &harr[smallest]);
-        MinHeapify(smallest);
     }
+    if(total_comparisions > max_comparisons_added_by_DecreaseKey)
+        max_comparisons_added_by_DecreaseKey = total_comparisions;
+    total_comparisons_added_by_DecreaseKey += total_comparisions;
+
 }
 
-int MinHeap::isEmpty(){
-    if(heap_size == 0){
-        return 1;
-    }
-    else{
-        return 0;
-    }
+//Utility function to print Heap contents
+void DMinHeap::printHeap(){
+cerr<<"HEAP-------->"<<endl;
+for(int i = 0; i < heap_size; i++){
+    cerr<<"("<<heap_array[i].first<<","<<heap_array[i].second<<")"<<endl;
+}
+cerr<<"---------->"<<endl;
 }
 
-void MinHeap::printHeap(){
-    
-    cout<<"HEAP-------->"<<endl;
-    for(int i = 0; i < heap_size; i++){
-        cout<<"("<<harr[i].first<<","<<harr[i].second<<")"<<endl;
-    }
-    cout<<"---------->"<<endl;
-}
