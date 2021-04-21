@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char* argv[]){
     
     // global flag variable for printing debug information
-    bool DEBUG = true;
+    bool DEBUG = false;
     
     
     // First check if proper CLIs are supplied (3 additional command lines are expected and required) 
